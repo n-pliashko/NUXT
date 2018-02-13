@@ -1,0 +1,48 @@
+section.account-links
+  .container-fluid
+    .row.mt-5
+      .col-12.col-md-6
+        .acct-menu.account-sprite
+          p
+            strong
+              nuxt-link#myOrdersLink(:to='{name: "Account/orders"}', rel='nofollow').blue-ul Orders »
+          p View any outstanding orders or orders in your order history.
+        .acct-script.account-sprite
+          p
+            strong
+              nuxt-link#myPrescriptionsLink(:to='{name: "Account/prescriptions"}', rel='nofollow').blue-ul Prescriptions »
+          p Store your Prescription for easy ordering.
+        .acct-helpdesk.account-sprite
+          p
+            strong
+              nuxt-link#myHelpDeskLink(to='customer-services', rel='nofollow').blue-ul Customer Services »
+          p Get support and view any logged helpdesk tickets.
+        .acct-wishlist.account-sprite
+          p
+            strong
+              nuxt-link#myWishlistLink(:to='{name: "Wishlist"}', rel='nofollow').blue-ul Wishlist »
+          p View items in your wishlist
+      .col-12.col-md-6
+        .acct-profile.account-sprite
+          p
+            strong
+              nuxt-link#myProfileLink(:to='{name: "Account/update"}', rel='nofollow').blue-ul Profile »
+          p Change your addresses, email address, and contact details.
+        .acct-setting.account-sprite
+          p
+            strong
+              nuxt-link#mySettingsLink(:to='{name: "Account/password/"}', rel='nofollow').blue-ul Account Settings »
+          p Change your Password and Newsletter Subscription Options.
+        .acct-reviews.account-sprite
+          p
+            strong
+              nuxt-link#myReviewsLink(:to='{name: "Account/reviews"}', rel='nofollow').blue-ul Product Reviews »
+          p View your product reviews
+        .acct-basket.account-sprite
+          p
+            strong
+              nuxt-link#myBasketLink(:to='{name: "Basket"}', rel='nofollow').blue-ul View Cart »
+          p
+            | You currently have&nbsp;
+            strong %item%
+            |  Item(s) in your shopping basket.

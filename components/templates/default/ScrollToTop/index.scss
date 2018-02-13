@@ -1,0 +1,17 @@
+@import '~assets/_Styles/mixins';
+
+#backToTop {
+  @include size(50px);
+  bottom: 20px;
+  right: 20px;
+  position: fixed;
+  background: url(https://d9qzjwuieyamt.cloudfront.net/res/images/_png/scroll_top.png?20170915095035) no-repeat;
+
+  &:hover, &:focus {
+    background: url(https://d9qzjwuieyamt.cloudfront.net/res/images/_png/scroll_top_over.png?20170915095035) no-repeat;
+    cursor: pointer;
+  }
+}
+
+
+

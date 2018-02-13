@@ -1,0 +1,24 @@
+section
+  .homepage-banner.d-none.d-lg-block
+    .container-fluid.content-wrapper.text-center
+      .text-wrapper
+        br
+        strong Prescription glasses from ₴296.15
+        p including
+          span.font-weight-bold.text-uppercase &nbsp;free
+          |  lenses & coatings
+      br
+      br
+      nuxt-link#bannerLinkToMen(to="/glasses/prescription/mens/c10/").big-button.text-uppercase Men
+      nuxt-link#bannerLinkToLadies(to="/glasses/prescription/ladies/c11/").big-button.text-uppercase Women
+
+  Slick(aria-label='Home SS - Slider', ref="slick", :options="slickOptions").d-lg-none
+    nuxt-link(to='/glasses/prescription/mens/c10/')
+      img.img-fluid(src='https://d9qzjwuieyamt.cloudfront.net/res/images/banners/home/slider/mens-glasses.jpg?20171020111122', alt='mens glasses')
+    nuxt-link(to='/glasses/prescription/ladies/c11/')
+      img.img-fluid(src='https://d9qzjwuieyamt.cloudfront.net/res/images/banners/home/slider/ladies-glasses.jpg?20171020111122', alt='womens glasses')
+    nuxt-link(to='/cheap-glasses/')
+      img.img-fluid(src='https://d9qzjwuieyamt.cloudfront.net/res/images/banners/home/slider/sweet-deal.jpg?20171020111122', alt='cheap £6 glasses')
+    nuxt-link(to='/sunglasses/designer/prescription-compatible/c274/')
+      img.img-fluid(src='https://d9qzjwuieyamt.cloudfront.net/res/images/banners/home/slider/rx-sunglasses.jpg?20171020111122', alt='prescription sunglasses')
+

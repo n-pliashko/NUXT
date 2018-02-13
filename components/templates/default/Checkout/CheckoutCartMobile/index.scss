@@ -1,0 +1,27 @@
+// Import main style settings
+@import '~assets/_Styles/mixins';
+
+#miniCartMobile {
+  background-color: white;
+
+  .express-block {
+    background-color: #fafafa;
+    color: #019e43;
+    text-align: center;
+    @include largeDesktop {
+      padding: 0 1rem;
+    }
+    @include largeDesktop-down {
+      padding: 0;
+    }
+  }
+
+  .checkout-item{
+    margin: .5rem 0;
+    padding-top: 10px;
+  }
+
+  .checkout-summary-prices {
+    margin-top: .45rem;
+  }
+}

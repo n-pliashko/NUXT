@@ -1,0 +1,276 @@
+#checkoutThankYouPage.page
+  PageHeader
+  main
+    .container-fluid
+      .row
+        .col-12.text-center
+          br
+          br
+          h1.black Order Completed
+          p.largest Thank you for shopping with SelectSpecs.com
+          br
+          p Your order reference number is:
+          p.large
+            strong {{ order.order_number }}
+          p.small
+            em
+              strong Order Total:&nbsp;
+              span.red
+                span(v-html="currency.symbol")
+                | {{exchange(parseFloat(order.order_amount) + parseFloat(order.shipping_cost))}}
+              |  (Including shipping and any applied discounts)
+          br
+          p
+            strong Your order will dispatch to...
+            |  {{order.profile.first_name}}, {{order.profile.last_name}}, {{order.profile.phone}}, {{order.deliveryAddress.line1}}, {{order.deliveryAddress.line2}}, {{order.deliveryAddress.town}}, {{order.deliveryAddress.state}}, {{countryList[order.deliveryAddress.country_id]['country_name']}}
+          p
+            strong Delivery Method:
+            |  {{order.deliveryMethod.delivery_method_name}}
+          br
+          p You will receive an email confirmation shortly at
+            strong  {{order.profile.email}}
+          p You can track your order&nbsp;
+            nuxt-link(:to='`/account/view_order/${order.order_number}/`').blue-ul here
+            | .
+          .confirm-cheque
+            p.large
+              strong Paying by cheque?
+            p Send your payment to
+              strong  Lockwoods Yard, The Grove, Westgate on Sea, Kent, UK. CT8 8AS.
+              |   Please make cheque payable to
+              strong  SelectSpecs.com
+              |  and include your order number on the reverse of the cheque.
+              |  Please also include a copy of your order confirmation.
+            p
+              br
+            p.small
+              em We can only accept cheques in GBP (£) from UK bank accounts.
+              |  If you have made an error or wish to pay for your order by using an alternative payment method please contact us immediately.
+
+          br
+          nuxt-link(:to='`/account/view_order/${order.order_number}/`').btn.orange-button.blue-btn
+            | Track Order &nbsp;
+            i.fa.fa-play.text-white
+          nuxt-link(:to='{name: "Main"}').btn.orange-button
+            | Continue Shopping &nbsp;
+            i.fa.fa-play.text-white
+    hr
+    br
+    .container-fluid
+      .row
+        .col-12.text-center
+          .row
+            .col-12
+              p.largest  Summary of your Order
+              p.small Price of items below do not include any promotional discounts or shipping fees.
+              br
+    hr.thick-hr
+    .container-fluid(v-for='(item,index) in order.orderItems')
+      .row.basket.text-left.mb-5
+        .col-12.col-md-4.col-lg-3
+          .row
+            //a(href='/sunglasses/savannah/s8122-black-sunglasses/ss1611.01.html')
+            nuxt-link(:to="{ name: 'ItemPage', params: {item: parseFloat(item.item_number / 100).toFixed(2), category: null, designer: null, model: null}}")
+              img.img-fluid(src='https://d9qzjwuieyamt.cloudfront.net/res/images/items/mini_pix/1611_01_1.jpg', :alt='order.orderItems.description', title='order.orderItems.description')
+        .col-12.col-md-8.col-lg-9
+          .row
+            .col-12
+              p
+                strong
+                  nuxt-link(:to="{ name: 'ItemPage', params: {item: parseFloat(item.item_number / 100).toFixed(2), category: null, designer: null, model: null}}") {{ item.description }}
+              //p.small
+              //  a(href='#') -- Savannah
+              br
+              p.small
+                strong Quantity:
+                |  {{ item.quantity }}
+              br
+              //p.small
+              //  strong Colour:
+              //  |  -- Black Rubber Black with Grey AC lenses  UV400
+              //p.small
+              //  strong Size:
+              //  |  -- 150-17-52-37
+              p.small
+                strong
+                  | Frame Price:
+                  span.red &nbsp;
+                    span(v-html="currency.symbol")
+                    | {{ item.price }}
+              p
+              p
+
+    .container-fluid
+      .row.help-info
+        .col-12.text-center
+          p.largest Help & Information
+          br
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent1",
+              aria-expanded="false",
+              aria-controls="myContent1").blue-ul Production & Shipping Information
+          #myContent1.help-popup.collapse
+            p
+              | We anticipate your order to be completed within 7-10 working days, but there are many variables involved. Please see our&nbsp;
+              strong
+                a(href='#', rel='nofollow') Production & Delivery
+              |  page for further details.
+              br
+              br
+              |  If there any problems with your order we will contact you via email, we will also add a message to your order within your
+              a(href='#', rel='nofollow') account
+              | .
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent2",
+              aria-expanded="false",
+              aria-controls="myContent2").blue-ul Need to send something to us?
+          #myContent2.help-popup.collapse
+            p
+              | To complete your order, you may be required to send your&nbsp;
+              strong prescription
+              |  or&nbsp;
+              strong frame
+              |  to us. Please send any correspondence to:-
+              br
+              br
+              strong Address:-
+              |  SelectSpecs.com, Lockwoods Yard, The Grove, Westgate on Sea, Kent, UK. CT8 8AS.
+              strong FAX:-
+              |  +44 1843 833247
+              strong Email:-&nbsp;
+              a#emailWriteLink(href='mailto:ticketsupport@selectspecs.com?subject=Order Number: ').underlined-link ticketsupport@selectspecs.com
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent3",
+              aria-expanded="false",
+              aria-controls="myContent3").blue-ul Sending your Prescription
+          #myContent3.help-popup.collapse
+            p
+              strong via post, fax or email
+            br
+            p
+              strong By Email
+              br
+              |  Send to '
+              strong ticketsupport@selectspecs.com
+              | ', please include your order number, name and postcode in the email.
+              br
+              br
+              strong By Phone
+              br
+              |  Call us on&nbsp;
+              strong +44 (0)3303 801 190
+              |  with your prescription details or if you have any questions.
+              br
+              br
+              strong By Post
+              br
+              |  Send your prescription to us at:
+              br
+              |  SelectSpecs. Lockwoods Yard, The Grove, Westgate on Sea, Kent, UK. CT8 8AS.
+              br
+              br
+              strong By Fax
+              br
+              |  Please fax your prescription to&nbsp;
+              strong (UK) +44 (0)1843 833247
+              | . Ensure you include your order number, name and postcode on your fax.
+              br
+              br
+              em
+                | (When posting or faxing prescription, make sure that your&nbsp;
+                strong Order Number
+                |  and&nbsp;
+                strong Account Name
+                |  is clearly written on your prescription form to prevent delays with your order.)
+              br
+              br
+              |  If you are posting an original prescription and you would like it returned please include a stamped and addressed envelope. Prescriptions without a SAE will be destroyed for Data Protection purposes. We always recommend sending a photocopy.
+              br
+              br
+              strong Please Note:
+              |  Your order will be kept&nbsp;
+              strong on HOLD
+              |  until we receive a copy of your prescription. Please advise us ASAP if you do not need to send a copy of your prescription to prevent delays with your order.
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent4",
+              aria-expanded="false",
+              aria-controls="myContent4").blue-ul PD Check Information
+          #myContent4.help-popup.collapse
+            p
+              strong 1.
+              |  Ensure your glasses will be sent with lenses. We cannot read PD without lenses.
+            br
+            p
+              strong 2.
+              |  Package up your glasses and send to us at the address above along with your order confirmation (and a copy of your prescription if you wish). We recommend choosing an insured/recorded postage option to ensure your glasses arrive with us safely.
+            br
+            p
+              strong 3.
+              |  We will return your glasses to you or send your glasses to charity based upon your order requirements.
+            br
+            p
+              strong Please Note:
+              |  Your order will be kept&nbsp;
+              strong on HOLD
+              |  until we receive your glasses for PD Check. Please advise us ASAP if you know your PD and will not be sending us a pair of glasses for a PD check to prevent delays with your order.
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent5",
+              aria-expanded="false",
+              aria-controls="myContent5").blue-ul Reglaze Information
+          #myContent5.help-popup.collapse
+            p
+              strong 1.
+              |  Package up your glasses and send to us at the address above along with your order confirmation (and a copy of your prescription if you wish). We recommend choosing an insured/recorded postage option to ensure your glasses arrive with us safely.
+            br
+            p
+              strong 2.
+              |  Once your order is complete we will return your glasses to you.
+            br
+            p
+              strong Please Note:
+              |  Your order will be kept&nbsp;
+              strong on HOLD
+              |  until we receive your glasses for PD Check. Please advise us ASAP if you know your PD and will not be sending us a pair of glasses for a PD check to prevent delays with your order.
+            br
+            p
+              strong Please Note:
+              |  if glasses are sent to us from outside of the European Union, they should be labelled on the outside of the parcel as&nbsp;
+              strong "Goods for repair only, no commercial value"
+              | . These glasses should be shipped to our UK address.
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent6",
+              aria-expanded="false",
+              aria-controls="myContent6").blue-ul Query? Noticed an error?
+          #myContent6.help-popup.collapse
+            p
+              | If you have a query or have noticed an error with your order, please send us an email through our&nbsp;
+              strong
+                a(href='#').underlined-link Customer Services
+              |  system as soon as possible.
+          p
+            strong
+              a(data-toggle="collapse",
+              href="#myContent7",
+              aria-expanded="false",
+              aria-controls="myContent7").blue-ul VAT
+          #myContent7.help-popup.collapse
+            p
+              | Orders from within the UK and Europe are shipped to the customer from the UK - no extra VAT or taxes are payable for delivery of these products.
+              br
+              br
+              |  For orders outside the EU, designer brand name products are shipped from the United Kingdom while budget products are shipped from Hong Kong.  Buyers in countries outside of the EU will be responsible for any payment that may be due for local import duties or taxes on all of our products
+  //TrustpilotWidget
+  PageFooter
+  ScrollToTop

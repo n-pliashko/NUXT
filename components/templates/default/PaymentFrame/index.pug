@@ -1,0 +1,22 @@
+div
+  // <p>{{iframeUrl}}</p>
+  // <button v-on:click="click()">SDS</button>
+  //.loading(v-if='!frameLoaded')
+  .frame-loader(v-if='!frameLoaded')
+    i.fa.fa-spinner.fa-spin.fa-pulse.fa-3x
+  iframe.payment-frame#payment-frame-on-checkout(v-else, :src='iframeUrl', frameborder="0")
+  .debug_data_for_test(v-if='iframeHidden.order_data' v-show='false')
+    span.unit_price {{ iframeHidden.order_data[0][0]['unit_price'] }}
+    ul
+      li(v-for='(field, key) in iframeHidden.order_data[0][0]')
+        | {{key}}: {{field}}
+    ul
+      li(v-for='(field, key) in iframeHidden.order_data[0][1]')
+        | {{key}}: {{field}}
+    ul
+      li(v-for='(field, key) in iframeHidden.order_data[1]')
+        | {{key}}: {{field}}
+    ul
+      li(v-for='(field, key) in iframeHidden.transaction')
+        | {{key}}: {{field}}
+

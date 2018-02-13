@@ -1,0 +1,37 @@
+// Mixins
+
+
+// Sizes
+@mixin size($amount) {
+  height: $amount;
+  width: $amount;
+}
+
+// Tablet and down
+@mixin tablet {
+  @media (min-width: 576px) { @content; }
+}
+@mixin tablet-down {
+  @media (max-width: 576px) { @content; }
+}
+
+// Desktop and down
+@mixin desktop {
+  @media (min-width: 640px) { @content; }
+}
+@mixin desktop-down {
+  @media (max-width: 640px) { @content; }
+}
+
+// Large desktop and down
+@mixin largeDesktop{
+  @media (min-width: 1024px) { @content; }
+}
+@mixin largeDesktop-down{
+  @media (max-width: 1024px) { @content; }
+}
+
+// Extra large desktop and down
+@mixin extraLargeDesktop{
+  @media (min-width: 1200px) { @content; }
+}

@@ -1,0 +1,30 @@
+#miniCartMobile
+  .container
+    .row
+      .checkout-item(v-for='(item, index) in basket.order.items', :id='"item_" + index').col-12.col-md-4
+        .row
+          .col-6.col-md-12
+            img(:src='item.option.image_src === null ? "https://d9qzjwuieyamt.cloudfront.net/public/en/res/images/items/fullsized/271_18_1.jpg":item.option.image_src').img-fluid
+            .express-block
+              p.smallest
+                strong
+                  i.fa.fa-thumbs-up
+                  |  Express
+                  span.d-none.d-lg-inline  service
+                  |  available
+          .col-6.col-md-12.text-md-center
+            p.small
+              strong {{ item.designerName }} {{ item.modelName }}
+            p.smaller
+              em.text-muted Option
+            p.small
+              strong.red  {{ decodeHtml(currency.symbol) }}
+                span(:id='"item" + index + "Price"') {{exchange(parseFloat(item.option.price))}}&nbsp;
+              span(:id='"item" + index + "Qty"')
+                em (Qty: {{ item.quantity }})
+            p.small
+              nuxt-link(to="#").blue-ul More details »
+  hr
+  .text-center
+    p.small
+      nuxt-link(to="#").blue-hovered-link Edit Items

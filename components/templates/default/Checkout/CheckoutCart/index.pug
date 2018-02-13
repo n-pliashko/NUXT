@@ -1,0 +1,53 @@
+#miniCart
+  .container
+    .row
+      .col-12
+        h5
+          strong Order Summary
+          nuxt-link#editMiniCartLink(:to='{name: "Basket"}', rel='nofollow').btn.edit-button Edit
+    hr
+    .row
+      .checkout-item(v-for='(item, index) in basket.order.items', :id='"checkout" + index + "Item"').container
+        .row
+          .col-6
+            img(:src='item.option.image_src === null ? "https://d9qzjwuieyamt.cloudfront.net/public/en/res/images/items/fullsized/271_18_1.jpg":item.option.image_src').img-fluid
+            .express-block
+              p.smallest
+                strong
+                  i.fa.fa-thumbs-up
+                  |  Express
+                  span.d-none.d-lg-inline  service
+                  |  available
+          .col-6
+            p.small
+              strong {{ item.designerName }} {{ item.modelName }}
+            p.smaller
+              em.text-muted Option
+            p.small
+              strong.red  {{ decodeHtml(currency.symbol) }}
+                span(:id='"item" + index + "Price"') {{exchange(parseFloat(item.option.price))}}&nbsp;
+              span(:id='"item" + index + "Qty"')
+                em (Qty: {{ item.quantity }})
+            p.small
+              nuxt-link(:id="'checkoutItem' + index + 'Details'", to="#").blue-ul More details »
+    hr
+    .checkout-summary-prices.row
+      .col-12
+        p.py-2 Sub Total
+          span#subTotalMiniCart.float-right
+            | {{decodeHtml(currency.symbol)}}{{exchange(parseFloat(basket.order.order_amount))}}
+        p.py-2 Delivery
+          span#shippingMiniCart.float-right
+            | {{ shippingCost == 0 ? 'FREE' : decodeHtml(currency.symbol) + shippingCost }}
+        p(style="font-size: 1rem;").pt-2.pb-0
+          strong Order Total
+            span#orderTotalMiniCart.float-right
+              | {{ decodeHtml(currency.symbol) }}{{ subTotal }}
+
+    //.total
+      span.bl Sub Total: {{ decodeHtml(currency.symbol) }}
+        span#subTotalMiniCart {{exchange(parseFloat(basket.order.order_amount))}}
+      span.bl Delivery:&nbsp;
+        span#shippingMiniCart {{ shippingCost == 0 ? 'FREE' : decodeHtml(currency.symbol) + shippingCost }}
+      span.bl.order-total Order Total:&nbsp;{{ decodeHtml(currency.symbol) }}
+        span#orderTotalMiniCart {{ subTotal }}

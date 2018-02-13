@@ -1,0 +1,27 @@
+.confirm-cheque {
+  background: #f7f5f6;
+  margin-top: 1rem;
+  padding: .75rem;
+}
+.btn {
+  margin: 0 .1rem 1rem;
+}
+.blue-btn {
+  background-color: #48647c;
+  &:hover {
+    background-color: #c00;
+  }
+}
+
+.help-info {
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+  padding: 4rem 0;
+  margin-top: 3rem;
+}
+
+.help-popup {
+  margin: 1rem 0;
+  padding: .5rem;
+  background: #f7f5f6;
+}
