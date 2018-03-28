@@ -578,7 +578,7 @@ export default {
         'X-Requested-With': 'XMLHttpRequest'
       },
       emulateJSON: true
-    }).then(response => response.json())
+    }).then(response => response.data)
       .then((data) => {
         let redirects = []
         Object.values(data).map(obj => {
