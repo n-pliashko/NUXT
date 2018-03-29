@@ -1,4 +1,4 @@
-export default  {
+const config = {
   apiHost: 'https://yii.omnismain.com',
   integrationHost: 'https://ss-brahmin.omnismain.com',
   prefix: '/rest',
@@ -23,5 +23,10 @@ export default  {
   },
   designers: require('./Components/designers').dev,
   reviews: require('./Components/reviews').dev,
-  categories: require('./Components/categories').dev
+  categories: require('./Components/categories').dev,
+  vat: 1.2
 }
+export const apiHost = config.apiHost
+export const prefix = config.prefix
+
+export default config;

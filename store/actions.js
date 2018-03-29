@@ -524,6 +524,7 @@ export default {
           }
           breadcrumbs.push({title: router.props.default.breadcrumb, path: router.path})
         }
+        console.log('getMenuDescription:::', json)
         commit(types.SET_BREADCRUMBS, breadcrumbs)
         commit(types.SET_PAGE_DESCRIPTION, json)
       })
@@ -579,7 +580,7 @@ export default {
       },
       emulateJSON: true
     }).then(response => response.data)
-      .then((data) => {
+      .then(data => {
         let redirects = []
         Object.values(data).map(obj => {
           let redirect = '/' + obj.path.replace(/(\/){2,}/, '/').replace(/(^\/)|(\/$)/, '')
@@ -592,6 +593,7 @@ export default {
             redirects = redirects.concat(route)
           }
         })
+        console.log('loadRedirects:::', redirects)
         commit(types.SET_REDIRECTS, redirects)
       })
   },

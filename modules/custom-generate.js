@@ -1,6 +1,4 @@
 const axios = require('axios')
-//const path = require('path');
-// import config from '@/config'
 
 let components = {
   'Hello': '../components/scripts/Hello/index.vue',
@@ -50,11 +48,8 @@ let components = {
 
 module.exports = function () {
   this.nuxt.hook('build:extendRoutes', async (routes, resolve) => {
-    /* var http = axios.create({
-       baseURL: config.apiHost + config.prefix
-     })*/
-    console.log('generate:extendRoutes')
-    await axios.get('https://yii.omnismain.com/rest/search/routes/get-pages-routes', {}, {
+    let baseUrl = 'https://yii.omnismain.com/rest/'
+    await axios.get(baseUrl + 'search/routes/get-pages-routes', {}, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest'
       },
@@ -177,140 +172,24 @@ module.exports = function () {
           name: 'Payments',
           component: resolve(__dirname, components['Payments'])
         })
+
+      axios.get(baseUrl + 'search/routes/get-redirects', {}, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        emulateJSON: true
+      }).then((data) => {
+        Object.values(data.data).map(obj => {
+          let redirect = '/' + obj.path.replace(/(\/){2,}/, '/').replace(/(^\/)|(\/$)/, '')
+          let path = '/' + obj.redirect.replace(/(\/){2,}/, '/').replace(/(^\/)|(\/$)/, '')
+          if (redirect && path !== redirect) {
+            routes.push({
+              path: path,
+              redirect: redirect
+            })
+          }
+        })
+      })
     })
-
-    /*
-       routes.push(
-         {
-           path: '/account/update',
-           name: 'Account/update',
-           component: components['Profile']
-         },
-         /*{
-           path: '/account/password/',
-           name: 'Account/password/',
-           component: path.resolve(__dirname, components['Settings'])
-         },
-         {
-           path: '/account/profile',
-           name: 'Account',
-           component: path.resolve(__dirname, components['Account'])
-         },
-         {
-           path: '/account/orders',
-           name: 'Account/orders',
-           component: path.resolve(__dirname, components['Orders'])
-         },
-         {
-           path: '/account/reviews',
-           name: 'Account/reviews',
-           component: path.resolve(__dirname, components['ReviewsList'])
-         },
-         {
-           path: '/reviews/write/:item_id',
-           name: 'Reviews',
-           component: path.resolve(__dirname, components['Review'])
-         },
-         {
-           path: '/account/prescriptions',
-           name: 'Account/prescriptions',
-           component: path.resolve(__dirname, components['SavedPrescriptions'])
-         },
-         {
-           path: '/account/view_order/:id(\\d+)/',
-           name: 'Account/order/view',
-           component: path.resolve(__dirname, components['Order']),
-           props: true
-         },
-         {
-           path: '/catalogue/index/term/:search',
-           name: 'ProductListSearch',
-           component: path.resolve(__dirname, components['Products'])
-         },
-         {
-           path: '/:menu(.+)?/prescription/select_use',
-           name: 'SelectUse',
-           component: path.resolve(__dirname, components['Prescription']),
-           props: {stage: 'SelectUse'}
-         },
-         {
-           path: '/:menu(.+)?/prescription/prescriptions',
-           name: 'Prescriptions',
-           component: path.resolve(__dirname, components['Prescription']),
-           props: {stage: 'Prescriptions'}
-         },
-         {
-           path: '/:menu(.+)?/prescription/lens_type',
-           name: 'LensType',
-           component: path.resolve(__dirname, components['Prescription']),
-           props: {stage: 'LensType'}
-         },
-         {
-           path: '/:menu(.+)?/prescription/lens_options',
-           name: 'LensOptions',
-           component: path.resolve(__dirname, components['Prescription']),
-           props: {stage: 'LensOptions'}
-         },
-         {
-           path: '/checkout/fail/:id',
-           name: 'Fail',
-           component: path.resolve(__dirname, components['Fail'])
-         },
-         {
-           path: '/checkout/amazon/:order_id',
-           name: 'Amazon',
-           component: path.resolve(__dirname, components['Amazon'])
-         },
-         {
-           path: '/checkout/thank/:order_id',
-           name: 'Thank',
-           component: path.resolve(__dirname, components['Thank'])
-         },
-         {
-           path: '/payment/:order_id',
-           name: 'Checkout',
-           component: path.resolve(__dirname, components['Checkout'])
-         },
-         {
-           path: '/:category?/:designer?/:model?/(.+)?/ss:item(\\d+\\.?\\d+).html',
-           name: 'ItemPage',
-           component: path.resolve(__dirname, components['PageItem'])
-         },
-         {
-           path: '/payments/:order_id',
-           name: 'Payments',
-           component: path.resolve(__dirname, components['Payments'])
-         }
-       )*/
-    console.log(routes)
-
-    /* var http = axios.create({
-       baseURL: config.apiHost + config.prefix
-     })
-     http.get(config.routes.getPagesRoutes, {}, {
-       headers: {
-         'X-Requested-With': 'XMLHttpRequest'
-       },
-       emulateJSON: true
-     }).then((data) => {
-       let generated_routes = []
-       Object.values(data.data).map(page => {
-         let filtered = generated_routes.filter(obj => obj.name === page.name)
-         generated_routes.push({
-           name: page.name
-         })
-         routes.push({
-           path: '/' + page.path.replace(/^\//, ''),
-           name: filtered.length > 0 ? page.name + filtered.length : page.name,
-           component: path.resolve(__dirname, components[page.component])
-         })
-       })
-       routes.push({
-         name: 'PageNotFound',
-         path: '*',
-         component: path.resolve(__dirname, 'pages/404.vue')
-       })
-       console.log(routes)
-     })*/
   })
 }

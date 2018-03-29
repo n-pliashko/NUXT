@@ -39,7 +39,7 @@
             span.d-none.d-md-inline Details »
         button(:id="'addToWishlist' + item.id + 'Button'",
         type='button', @click='setSwitchWishlist(item.id)').btn.cat-button.wishlist-button
-          i.fa.fa-heart(v-if='$store.getters.isExistWishlist(item.id)', aria-hidden='true')
+          i.fa.fa-heart(v-if='item.wish', aria-hidden='true')
           i.fa.fa-heart-o(v-else, aria-hidden='true')
       //
         .wish-enable(v-if='$store.getters.isExistWishlist(item.id)')

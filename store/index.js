@@ -4,6 +4,7 @@ import mutations from './mutations'
 import actions from './actions'
 import getters from './getters'
 import config from '../config'
+import vat from './vat'
 
 Vue.use(Vuex)
 
@@ -56,10 +57,13 @@ const state = {
     exchange: price => price,
     exchangeBack: price => price
   },
+  countries: [],
   pageMenuDescription: {},
   allCategories: [],
   allDesigners: []
 }
+
+state.vat = vat.bind(state)
 
 const store = () => {
   return new Vuex.Store({

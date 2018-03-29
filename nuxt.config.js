@@ -26,7 +26,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    vendor: ['axios', 'jquery', 'localStorage'],
+    vendor: ['jquery', 'axios', 'localStorage'],
     /*
     ** Run ESLint on save
     */
@@ -52,8 +52,11 @@ module.exports = {
   modules: [
     '~modules/custom-generate.js'
   ],
-  plugins: ['~/plugins/slick'],
+  plugins: [
+    '~/plugins/slick'
+  ],
   router: {
+    mode: 'history',
     scrollBehavior (to, from, savedPosition) {
       return {x: 0, y: 0}
     },

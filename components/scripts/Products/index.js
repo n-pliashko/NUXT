@@ -15,6 +15,8 @@ import { mapState } from 'vuex'
 import config from '@/config'
 import { parseQueryString, reverseRouteName, array_intersect, getSearchString, arrayToObject } from '@/config/helper'
 
+const parseUrl = require('parse-url')
+
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 let elasticsearch = require('elasticsearch')
 
@@ -37,29 +39,18 @@ export default {
   computed: {
     ...mapState({
       apiHost: (state) => state.apiHost,
-      description: (state) => {
-        let description = ''
-        let routerObj = state.pageMenuDescription
-        if (routerObj.page && routerObj.page.translations['en']) {
-          description = routerObj.page.translations['en'].description
-        }
-        if (routerObj.catalogue && routerObj.catalogue.translations['en']) {
-          description = routerObj.catalogue.translations['en'].description
-        }
-        return description
-      },
       breadcrumbs: (state) => state.breadcrumbs,
-      routerObj: (state) => state.pageMenuDescription,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
       exchange: (state) => state.currency.exchange,
       exchangeBack: (state) => state.currency.exchangeBack,
       backRoute: (state) => state.backRoute,
       allCategories: (state) => state.allCategories,
       allDesigners: (state) => state.allDesigners,
-      vat: (state) => state.vat
+      vat: (state) => state.vat,
+      routerObj: (state) => state.pageMenuDescription
     }),
     isHistoryAvailable: function () {
-      return !!(window.history && window.history.pushState)
+      return true//!!(window.history && window.history.pushState)
     },
     calculatedItems: function () {
       return {
@@ -142,6 +133,26 @@ export default {
       return links
     }
   },
+  asyncData ({req, route, store}) {
+    console.log('asyncData', store.state.pageMenuDescription)
+    let loc = {}
+    if (typeof window === 'undefined') {
+      loc = parseUrl(req.headers.host + '/' + route.fullPath)
+      loc.host = loc.resource
+    } else {
+      loc = window.location
+    }
+
+    let description = ''
+    let routerObj = store.state.pageMenuDescription
+    if (routerObj.page && routerObj.page.translations['en']) {
+      description = routerObj.page.translations['en'].description
+    }
+    if (routerObj.catalogue && routerObj.catalogue.translations['en']) {
+      description = routerObj.catalogue.translations['en'].description
+    }
+    return {location: loc, routerObj: store.state.pageMenuDescription, description: description}
+  },
   data () {
     return {
       client: null,
@@ -190,12 +201,12 @@ export default {
         sort: ''
       },
       navigation: {
-        location: window.location.href,
-        protocol: window.location.protocol,
-        host: window.location.host,
-        pathname: window.location.pathname,
-        search: window.location.search,
-        hash: window.location.hash
+        location: '',
+        protocol: '',
+        host: '',
+        pathname: '',
+        search: '',
+        hash: ''
       },
       searchTitle: '',
       filtersList: {},
@@ -207,10 +218,20 @@ export default {
     }
   },
   created () {
+    console.log(this.location)
     if (this.page) {
       this.layout = this.page
     } else {
       this.layout = false
+    }
+
+    this.navigation = {
+      location: this.location.href,
+      protocol: this.location.protocol,
+      host: this.location.host,
+      pathname: this.location.pathname,
+      search: this.location.search,
+      hash: this.location.hash
     }
 
     this.loading = true
@@ -487,8 +508,6 @@ export default {
       let _hash = self.navigation.hash
       let _search = this.getSearchString(params)
       let sign = _search.length > 0 ? '&' : '?'
-      let query = this.getSearchString(this.$root.search.params, false)
-      _search += query.length > 0 ? sign + query : ''
 
       if (this.$route.query.page) {
         sign = _search.length > 0 ? '&' : '?'
@@ -783,14 +802,6 @@ export default {
         if (this.breadcrumbs && this.generatedBreadcrumbs && this.breadcrumbs.length === 1 && this.generatedBreadcrumbs.length > 0) {
           this.$store.dispatch('setBreadcrumbs', this.generatedBreadcrumbs)
         }
-      },
-      deep: true
-    },
-    '$root.search': {
-      handler: function () {
-        this.changeNavigation()
-        this.calculateFilterCountItems()
-        this.loadComponents(0, 1)
       },
       deep: true
     },
