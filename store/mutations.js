@@ -158,7 +158,9 @@ export default {
     }
 
     state.currency.exchange = state.currency.exchangeFunc.bind(state.currency)
-    state.currencyexchangeBack = state.currency.exchangeBackFunc.bind(state.currency)
+    state.currency.exchangeBack = state.currency.exchangeBackFunc.bind(state.currency)
+
+    // console.log('CHANGE_CURRENCY:::', state.currency)
 
     if (state.user.user_number) {
       const {user: {profile}} = state
@@ -199,6 +201,7 @@ export default {
   },
 
   [types.LOAD_MENUS] (state, menus) {
+    console.log('call LOAD_MENUS')
     state.menus = menus
   },
   [types.LOAD_MOBILE_MENU] (state, menu) {
@@ -220,5 +223,8 @@ export default {
   },
   [types.LOAD_DESIGNERS] (state, designers) {
     state.allDesigners = designers
+  },
+  [types.SET_WINDOW_LOCATION] (state, location) {
+    state.windowLocation = location
   }
 }

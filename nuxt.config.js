@@ -53,7 +53,8 @@ module.exports = {
     '~modules/custom-generate.js'
   ],
   plugins: [
-    '~/plugins/slick'
+    '~/plugins/slick',
+    { src: '~plugins/persistedstate.js', ssr: false }
   ],
   router: {
     mode: 'history',

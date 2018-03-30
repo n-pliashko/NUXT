@@ -39,20 +39,36 @@ export default {
   computed: {
     ...mapState({
       apiHost: (state) => state.apiHost,
+      description: (state) => {
+        let description = ''
+        let routerObj = state.pageMenuDescription
+        if (routerObj.page && routerObj.page.translations['en']) {
+          description = routerObj.page.translations['en'].description
+        }
+        if (routerObj.catalogue && routerObj.catalogue.translations['en']) {
+          description = routerObj.catalogue.translations['en'].description
+        }
+        return description
+      },
       breadcrumbs: (state) => state.breadcrumbs,
+      routerObj: (state) => state.pageMenuDescription,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
       exchange: (state) => state.currency.exchange,
       exchangeBack: (state) => state.currency.exchangeBack,
       backRoute: (state) => state.backRoute,
       allCategories: (state) => state.allCategories,
       allDesigners: (state) => state.allDesigners,
-      vat: (state) => state.vat,
-      routerObj: (state) => state.pageMenuDescription
+      vat: (state) => {
+        console.log('vat:::', state.vat)
+        return state.vat
+      }
     }),
     isHistoryAvailable: function () {
       return true//!!(window.history && window.history.pushState)
     },
     calculatedItems: function () {
+      let self = this
+      console.log(this.$store.state)
       return {
         ...this.items,
         priceFrom: parseInt(this.exchange(this.vat(this.items.priceFrom).price)),
@@ -60,7 +76,7 @@ export default {
         data: this.items.data.map(item => {
           return {
             ...item,
-            price: this.exchange(this.vat(item.price).price)
+            price: self.exchange(self.vat(item.price).price)
           }
         })
       }
@@ -93,48 +109,88 @@ export default {
     }
   },
   props: ['page', 'category_id', 'designer_id', 'main_category', 'search', 'category', 'designers'],
-  head: {
-    title: function () {
-      let title = 'SelectSpecs'
-      if (this.routerObj.page && this.routerObj.page.translations['en']) {
-        title = this.routerObj.page.translations['en'].meta_title
+  head() {
+    let title = 'SelectSpecs'
+    if (this.routerObj.page && this.routerObj.page.translations['en']) {
+      title = this.routerObj.page.translations['en'].meta_title
+    }
+    if (this.routerObj.catalogue && this.routerObj.catalogue.translations['en']) {
+      title = this.routerObj.catalogue.translations['en'].meta_title
+    }
+    title = this.convertMenuContext(title)
+    const textarea = document.createElement('div')
+    textarea.innerHTML = title
+    title = textarea.innerText
+
+    let link = this.navigation.protocol + '//' + this.navigation.host + this.navigation.pathname
+    let links = [
+      {
+        rel: 'canonical',
+        href: link
+      },
+      {
+        rel: 'next',
+        href: link + '?page=' + (parseInt(this.pagination.currentPage) + 1),
+        id: 'next'
       }
-      if (this.routerObj.catalogue && this.routerObj.catalogue.translations['en']) {
-        title = this.routerObj.catalogue.translations['en'].meta_title
+    ]
+    if (parseInt(this.pagination.currentPage) > 1) {
+      links.push({
+        rel: 'prev',
+        href: link + '?page=' + (parseInt(this.pagination.currentPage) - 1),
+        id: 'prev'
+      })
+    }
+
+
+    let description = ''
+    let keywords = ''
+    let noindex = 0
+    if (this.routerObj.page) {
+      if (this.routerObj.page.translations['en']) {
+        description = this.routerObj.page.translations['en'].meta_description
+        keywords = this.routerObj.page.translations['en'].meta_keywords
       }
-      title = this.convertMenuContext(title)
-      const textarea = document.createElement('div')
-      textarea.innerHTML = title
-      title = textarea.innerText
-      return {
-        inner: title
-      }
-    },
-    link: function () {
-      let link = this.navigation.protocol + '//' + this.navigation.host + this.navigation.pathname
-      let links = [
-        {
-          rel: 'canonical',
-          href: link
-        },
-        {
-          rel: 'next',
-          href: link + '?page=' + (parseInt(this.pagination.currentPage) + 1),
-          id: 'next'
-        }
-      ]
-      if (parseInt(this.pagination.currentPage) > 1) {
-        links.push({
-          rel: 'prev',
-          href: link + '?page=' + (parseInt(this.pagination.currentPage) - 1),
-          id: 'prev'
-        })
-      }
-      return links
+      noindex = this.routerObj.page.noindex
+    }
+    if (this.routerObj.catalogue && this.routerObj.catalogue.translations['en']) {
+      description = this.routerObj.catalogue.translations['en'].meta_description
+      keywords = this.routerObj.catalogue.translations['en'].meta_keywords
+    }
+
+    if (Object.keys(this.designerDescription).length > 0) {
+      description = this.designerDescription.meta_description
+      keywords = this.designerDescription.meta_keywords
+    }
+
+    let meta = [
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1, user-scalable=no'
+      },
+      {
+        hid: 'description',
+        name: 'description',
+        content: description !== null && description.length > 0 ? this.convertMenuContext(description) : ''
+      },
+      keywords !== null && keywords.length > 0 ? {
+        hid: 'keywords',
+        name: 'keywords',
+        content: keywords
+      } : {},
+      noindex ? {
+        name: 'robots',
+        content: 'noindex,follow'
+      } : {}
+    ]
+    return {
+      title: title,
+      link : links,
+      meta: meta
     }
   },
   asyncData ({req, route, store}) {
-    console.log('asyncData', store.state.pageMenuDescription)
+    console.log('asyncData')
     let loc = {}
     if (typeof window === 'undefined') {
       loc = parseUrl(req.headers.host + '/' + route.fullPath)
@@ -142,16 +198,7 @@ export default {
     } else {
       loc = window.location
     }
-
-    let description = ''
-    let routerObj = store.state.pageMenuDescription
-    if (routerObj.page && routerObj.page.translations['en']) {
-      description = routerObj.page.translations['en'].description
-    }
-    if (routerObj.catalogue && routerObj.catalogue.translations['en']) {
-      description = routerObj.catalogue.translations['en'].description
-    }
-    return {location: loc, routerObj: store.state.pageMenuDescription, description: description}
+    return {location: loc}
   },
   data () {
     return {
@@ -218,7 +265,6 @@ export default {
     }
   },
   created () {
-    console.log(this.location)
     if (this.page) {
       this.layout = this.page
     } else {
@@ -822,17 +868,15 @@ export default {
       },
       deep: true
     },
-    'routerObj': {
-      handler: function () {
-        if (!this.page) {
-          let self = this
-          this.generateBreadcrumbs()
-          this.loadComponents(1).then(() => { self.calculateFilterCountItems() })
-          this.loadComponents(0, 1)
-          this.getDescriptionForBrandPage()
-        }
-      },
-      deep: true
+    'routerObj':function () {
+      console.log('routerObj watch')
+      if (!this.page) {
+        let self = this
+        this.generateBreadcrumbs()
+        this.loadComponents(1).then(() => { self.calculateFilterCountItems() })
+        this.loadComponents(0, 1)
+        this.getDescriptionForBrandPage()
+      }
     },
     'designerObj': {
       handler: function () {

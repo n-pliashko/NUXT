@@ -1,15 +1,16 @@
 import PromoModal from '~/components/scripts/PageHeader/UpperBar/PromoModal/index.vue'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'UpperBar',
   components: {PromoModal},
   computed: {
-    ...mapGetters([
-      'apiHost',
-      'selectedCurrency',
-      'currencies'
-    ])
+    ...mapState({
+      apiHost: (state) => state.apiHost,
+      currencies: (state) => state.currency.allCurrency,
+      selectedCurrency: (state) => state.currency.selected,
+      calculatePrice: (state) => state.calculatePrice
+    })
   },
   methods: {
     setCurrency (e) {

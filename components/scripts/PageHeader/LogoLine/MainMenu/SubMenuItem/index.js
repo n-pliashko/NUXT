@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 Vue.use(Vuetify)
+
 import { mapState } from 'vuex'
 
 let Handlebars = require('handlebars/dist/handlebars.min.js')
@@ -20,7 +21,7 @@ export default {
       Handlebars.registerHelper('exchange_price', function (value, rate = false) {
         let price = 0
         if (value) {
-          price = self.exchange(value)
+          price = value//self.$store.state.currency.exchangeBackFunc(value)
         }
         if (rate) {
           price = parseFloat(price).toFixed(parseInt(rate))

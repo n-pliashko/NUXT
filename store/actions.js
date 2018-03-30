@@ -8,6 +8,8 @@ import store from './index'
 
 Vue.use(VueResource)
 
+const parseUrl = require('parse-url')
+
 Vue.http.options.xhr = {withCredentials: true}
 
 var http = axios.create({
@@ -269,8 +271,12 @@ export default {
 
     commit(types.REQUEST_START)
     commit(types.REQUEST_CURRENCY_START)
-    var url = new URL(window.location.href)
-    var sspay = url.searchParams.get('sspay')
+    console.log(state.windowLocation)
+    // var url = new URL(window.location.href)
+    var sspay = 'false'//url.searchParams.get('sspay')
+    if (state.windowLocation.query && state.windowLocation.query.sspay) {
+      sspay = state.windowLocation.query.sspay
+    }
     Vue.http.get((sspay === 'true' ? integrationHost : apiHost) + (sspay === 'true' ? config.integrationPrefix : config.prefix) + config.currencies.allCurrencies + (sspay === 'true' ? '/' : ''))
       .then(data => commit(types.LOAD_CURRENCIES, {
         currencies: data.body,
@@ -524,7 +530,6 @@ export default {
           }
           breadcrumbs.push({title: router.props.default.breadcrumb, path: router.path})
         }
-        console.log('getMenuDescription:::', json)
         commit(types.SET_BREADCRUMBS, breadcrumbs)
         commit(types.SET_PAGE_DESCRIPTION, json)
       })
@@ -574,6 +579,7 @@ export default {
   },
 
   loadRedirects: ({commit}) => {
+    console.log('call loadRedirects')
     http.get(config.routes.getRedirects, {}, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest'
@@ -593,7 +599,6 @@ export default {
             redirects = redirects.concat(route)
           }
         })
-        console.log('loadRedirects:::', redirects)
         commit(types.SET_REDIRECTS, redirects)
       })
   },
@@ -604,5 +609,19 @@ export default {
   },
   closeSidebar: () => {
     $('#pageWrapper').removeClass('sidebar-open')
+  },
+
+  async nuxtServerInit ({ commit, dispatch }, { req, route }) {
+    let loc = parseUrl(req.headers.host + '/' + route.fullPath)
+    loc.host = loc.resource
+    commit(types.SET_WINDOW_LOCATION, loc)
+    await  dispatch('loadRedirects')
+    await dispatch('loadAllCurrencies')
+    await  dispatch('checkUser')
+    await dispatch('getBasket')
+    await dispatch('loadCategories', null)
+    await dispatch('loadDesigners', null)
+    await dispatch('loadMenus')
+    await  dispatch('loadMobileMenu')
   }
 }

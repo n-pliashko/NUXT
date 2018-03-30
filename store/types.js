@@ -42,3 +42,5 @@ export const CHANGE_FORM_ERROR = 'change_form_meta'
 
 export const LOAD_CATEGORIES = 'load_categories'
 export const LOAD_DESIGNERS = 'load_designers'
+
+export const SET_WINDOW_LOCATION = 'set_window_location'

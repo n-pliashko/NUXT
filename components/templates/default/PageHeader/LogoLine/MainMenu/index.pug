@@ -3,7 +3,7 @@ nav#navMenuDesktop.d-none.d-lg-block
     .col-12
       .nav-wrapper
         v-list.nav.nav-tabs.justify-content-center
-          v-menu(v-for="(menu, key) in treeData",
+          v-menu(v-for="(menu, key) in $store.state.menus",
             :key="key", open-on-hover, offset-y,
             class="main-nav nav-item")
             a(v-if="menu.link && menu.link.search('/^http(s?):\\/\\//') !== -1",

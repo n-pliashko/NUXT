@@ -7,10 +7,10 @@
 </template>
 
 <script>
-  import store from '~/store/index.js'
+ // import store from '~/store/index.js'
 
   export default {
-    store,
+    // store,
     head: {
       title: 'SelectSpecs',
       meta: [
@@ -50,14 +50,14 @@
       ]
     },
     mounted () {
-      this.$store.dispatch('loadRedirects')
+     /* this.$store.dispatch('loadRedirects')
       this.$store.dispatch('loadAllCurrencies')
       this.$store.dispatch('checkUser')
       this.$store.dispatch('getBasket')
       this.$store.dispatch('loadCategories', null)
       this.$store.dispatch('loadDesigners', null)
       this.$store.dispatch('loadMenus')
-      this.$store.dispatch('loadMobileMenu')
+      this.$store.dispatch('loadMobileMenu')*/
     }
   }
 </script>

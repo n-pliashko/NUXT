@@ -6,9 +6,14 @@ import getters from './getters'
 import config from '../config'
 import vat from './vat'
 
-Vue.use(Vuex)
+import currency from './currency'
+import calculatePrice from './price'
+
+ Vue.use(Vuex)
 
 const state = {
+  ...global.initialState,
+  windowLocation: {},
   apiHost: config.apiHost,
   integrationHost: config.integrationHost,
   formData: {},
@@ -28,35 +33,7 @@ const state = {
   address: {},
   regData: {},
   basket: {},
-  currency: {
-    allCurrency: {},
-    selected: undefined,
-    exchangeFunc: function (price) {
-      if (!this.selected) {
-        return price
-      }
-
-      const currency = {...this.allCurrency[this.selected]}
-      const num = Math.pow(10, currency.precision_digit || 2)
-      price *= currency.rate
-
-      return parseFloat(currency.to_greater ? Math.ceil(price * num) / num : Math.round(price * num) / num)
-    },
-    exchangeBackFunc: function (price) {
-      if (!this.selected) {
-        return price
-      }
-
-      const currency = {...this.allCurrency[this.selected]}
-
-      return parseFloat(price / currency.rate)
-    },
-    exchangeBackFuncByCurrency: function (price, currency) {
-      return parseFloat(price / currency.rate)
-    },
-    exchange: price => price,
-    exchangeBack: price => price
-  },
+  currency,
   countries: [],
   pageMenuDescription: {},
   allCategories: [],
@@ -64,9 +41,10 @@ const state = {
 }
 
 state.vat = vat.bind(state)
+state.calculatePrice = calculatePrice.bind(state)
 
-const store = () => {
-  return new Vuex.Store({
+const createStore = () => {
+ return new Vuex.Store({
     state,
     getters,
     actions,
@@ -74,4 +52,4 @@ const store = () => {
   })
 }
 
-export default store
+export default createStore

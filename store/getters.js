@@ -1,8 +1,8 @@
 export default {
   apiHost: (state) => state.apiHost,
-  currency: (state) => state.currency,
-  currencies: (state) => state.currency.allCurrency,
-  selectedCurrency: (state) => state.currency.selected,
+ // currency: (state) => state.currency,
+  // currencies: (state) => state.currency.allCurrency,
+  // selectedCurrency: (state) => state.currency.selected,
   basket: (state) => state.basket,
   routerObj: (state) => state.pageMenuDescription
 }
