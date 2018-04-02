@@ -1,4 +1,4 @@
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 
 export default {
@@ -10,9 +10,8 @@ export default {
       },
       routerObj: (state) => state.pageMenuDescription,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack
-    })
+    }),
+    ...mapGetters(['exchange', 'exchangeBack'])
   },
   methods: {
     convertMenuContext (context) {
@@ -29,7 +28,7 @@ export default {
       })
       let templateFn = Handlebars.compile(context)
       let output = templateFn(this)
-      const textarea = document.createElement('div')
+      const textarea = global.document.createElement('div')
       textarea.innerHTML = output
       output = textarea.innerText
       return output

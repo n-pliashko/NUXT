@@ -1,6 +1,6 @@
 import VerticalMenuItem from '~/components/scripts/PageHeader/LogoLine/MainMenu/VerticalMenuItem/index.vue'
 import $ from 'jquery'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import config from '~/config'
 
 let Handlebars = require('handlebars/dist/handlebars.min.js')
@@ -12,8 +12,8 @@ export default {
     ...mapState({
       apiHost: (state) => state.apiHost,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange
     }),
+    ...mapGetters(['exchange']),
     treeData: function () {
       let menus = []
       console.log('vertical')

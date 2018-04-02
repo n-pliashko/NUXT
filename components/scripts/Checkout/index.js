@@ -1,4 +1,4 @@
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import $ from 'jquery'
 import Vue from 'vue'
 import VueRes from 'vue-resource'
@@ -110,7 +110,6 @@ export default {
       currencyLoading: (state) => state.currencyLoading,
       integrationHost: (state) => state.integrationHost,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
       user: (state) => ({
         ...state.user
       }),
@@ -124,7 +123,8 @@ export default {
 
         return data
       }
-    })
+    }),
+    ...mapGetters(['exchange'])
   },
   methods: {
     searchCountryById: function (id) {

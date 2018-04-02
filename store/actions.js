@@ -271,7 +271,6 @@ export default {
 
     commit(types.REQUEST_START)
     commit(types.REQUEST_CURRENCY_START)
-    console.log(state.windowLocation)
     // var url = new URL(window.location.href)
     var sspay = 'false'//url.searchParams.get('sspay')
     if (state.windowLocation.query && state.windowLocation.query.sspay) {
@@ -611,17 +610,18 @@ export default {
     $('#pageWrapper').removeClass('sidebar-open')
   },
 
-  async nuxtServerInit ({ commit, dispatch }, { req, route }) {
+  async nuxtServerInit ({commit, dispatch}, {req, route}) {
     let loc = parseUrl(req.headers.host + '/' + route.fullPath)
     loc.host = loc.resource
+    console.log('nuxtServerInit')
     commit(types.SET_WINDOW_LOCATION, loc)
-    await  dispatch('loadRedirects')
+    await dispatch('loadRedirects')
     await dispatch('loadAllCurrencies')
-    await  dispatch('checkUser')
+    await dispatch('checkUser')
     await dispatch('getBasket')
     await dispatch('loadCategories', null)
     await dispatch('loadDesigners', null)
     await dispatch('loadMenus')
-    await  dispatch('loadMobileMenu')
+    await dispatch('loadMobileMenu')
   }
 }

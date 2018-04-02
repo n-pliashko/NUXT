@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 
 export default {
@@ -8,8 +8,8 @@ export default {
   computed: {
     ...mapState({
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange
-    })
+    }),
+    ...mapGetters(['exchange']),
   },
   methods: {
     closeSidebar () {

@@ -1,6 +1,6 @@
 import FilterBlock from '@/components/scripts/Products/FilterBlock/index.vue'
 import FilterBlockMobile from '@/components/scripts/Products/FilterBlockMobile/index.vue'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'filter_list',
@@ -19,12 +19,10 @@ export default {
   },
   computed: {
     ...mapState({
-      exchangeBackFuncByCurrency: (state) => state.currency.exchangeBackFuncByCurrency,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack,
-      vat: (state) => state.vat
     }),
+
+    ...mapGetters(['exchange', 'exchangeBack', 'vat', 'exchangeBackFuncByCurrency']),
     loading: function () {
       return !(this.$parent.filtersList && Object.keys(this.$parent.filtersList).length > 0)
     },

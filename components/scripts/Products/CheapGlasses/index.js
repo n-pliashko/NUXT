@@ -4,7 +4,7 @@ import OffersModal from '@/components/scripts/Products/CheapGlasses/OffersModal/
 import Pagination from '@/components/scripts/Pagination/index.vue'
 import TrustpilotWidget from '@/components/scripts/TrustpilotWidget/index.vue'
 import ShareButtons from '@/components/scripts/ShareButtons/index.vue'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import config from '@/config'
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 
@@ -49,10 +49,8 @@ export default {
       backRoute: (state) => state.backRoute,
       routerObj: (state) => state.pageMenuDescription,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack,
-      vat: (state) => state.vat
-    })
+    }),
+    ...mapGetters(['exchange', 'exchangeBack', 'vat'])
   },
   head: {
     title: function () {
@@ -64,7 +62,7 @@ export default {
         title = this.routerObj.catalogue.translations['en'].meta_title
       }
       title = title !== null && title.length > 0 ? this.convertMenuContext(title) : 'SelectSpecs'
-      const textarea = document.createElement('div')
+      const textarea = global.document.createElement('div')
       textarea.innerHTML = title
       title = textarea.innerText
       return {

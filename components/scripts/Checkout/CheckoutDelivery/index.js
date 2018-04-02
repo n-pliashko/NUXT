@@ -1,4 +1,4 @@
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import Vue from 'vue'
 import VueRes from 'vue-resource'
 import config from '@/config'
@@ -32,8 +32,8 @@ export default {
     ...mapState({
       apiHost: (state) => state.apiHost,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange
-    })
+    }),
+    ...mapGetters(['exchange'])
   },
   methods: {
     recalculateDelivery: function () {

@@ -1,4 +1,4 @@
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import $ from 'jquery'
 
 import Slick from 'vue-slick'
@@ -24,9 +24,8 @@ export default {
       apiHost: (state) => state.apiHost,
       breadcrumbs: (state) => state.breadcrumbs,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack
     }),
+    ...mapGetters(['exchange', 'exchangeBack']),
     item: function () { return this.$parent.item },
     options: function () { return this.$parent.options },
     selected: function () { return this.$parent.selected },

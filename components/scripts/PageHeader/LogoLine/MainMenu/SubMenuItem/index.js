@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
+
 Vue.use(Vuetify)
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 
@@ -12,16 +13,17 @@ export default {
   computed: {
     ...mapState({
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange
-    })
+    }),
+    ...mapGetters(['exchange'])
   },
   methods: {
     convertMenuContext (context) {
       let self = this
       Handlebars.registerHelper('exchange_price', function (value, rate = false) {
         let price = 0
+
         if (value) {
-          price = value//self.$store.state.currency.exchangeBackFunc(value)
+          price = self.exchange(value)
         }
         if (rate) {
           price = parseFloat(price).toFixed(parseInt(rate))

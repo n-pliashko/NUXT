@@ -1,7 +1,7 @@
 import SubMenuItem from '~/components/scripts/PageHeader/LogoLine/MainMenu/SubMenuItem/index.vue'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 
@@ -15,8 +15,8 @@ export default {
       apiHost: (state) => state.apiHost,
       treeData: (state) => state.menus,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange
     }),
+    ...mapGetters(['exchange'])
   },
   data () {
     return {
@@ -34,7 +34,7 @@ export default {
       Handlebars.registerHelper('exchange_price', function (value, rate = false) {
         let price = 0
         if (value) {
-          price = self.$store.state.currency.exchange(value)
+          price = self.exchange(value)
         }
         if (rate) {
           price = parseFloat(price).toFixed(parseInt(rate))

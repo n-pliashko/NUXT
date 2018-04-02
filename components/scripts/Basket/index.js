@@ -8,7 +8,7 @@ import DeliveryInfoModal from './DeliveryInfoModal/index.vue'
 import ReturnsInfoModal from './ReturnsInfoModal/index.vue'
 import TermsInfoModal from './TermsInfoModal/index.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import {reverseRouteName} from '@/config/helper'
 import $ from 'jquery'
 
@@ -49,11 +49,10 @@ export default {
         return state.loading
       },
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
       auth: (state) => state.authorization,
-      vat: (state) => state.vat,
       wishlist: (state) => state.wishlist
     }),
+    ...mapGetters(['exchange', 'vat']),
     items () {
       const {...data} = this.basket
       if (!data || !data.order || !data.order.orderItems) {

@@ -10,7 +10,7 @@
  // import store from '~/store/index.js'
 
   export default {
-    // store,
+    //store,
     head: {
       title: 'SelectSpecs',
       meta: [

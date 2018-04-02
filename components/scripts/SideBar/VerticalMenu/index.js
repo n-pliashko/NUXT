@@ -1,6 +1,6 @@
 import VerticalMenuItem from '@/components/scripts/SideBar/VerticalMenu/VerticalMenuItem/index.vue'
 import $ from 'jquery'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 let Handlebars = require('handlebars/dist/handlebars.min.js')
 
@@ -39,8 +39,8 @@ export default {
         return menus
       },
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange
-    })
+    }),
+    ...mapGetters(['exchange'])
   },
   data () {
     return {

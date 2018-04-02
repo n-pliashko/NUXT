@@ -17,7 +17,7 @@
             .col-12.text-center.small
               br.d-none.d-md-block
               p.small(v-if="description", v-html="convertMenuContext(description)")
-              p.small(v-else-if="isBrandPage && designerDescription", v-html="designerDescription")
+              p.small(v-else-if="isBrandPage && designerDescription.description", v-html="designerDescription.description")
               h1(v-else-if="isBrandPage").catalogue-title {{designer_name}} {{main_category_name ? main_category_name : ''}}
               div(v-if="isBrandPage && !designerDescription").d-none.d-md-block
                 hr

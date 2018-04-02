@@ -1,4 +1,4 @@
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import PageHeader from '@/components/scripts/PageHeader/index.vue'
 import PageItemMobile from '@/components/scripts/PageItem/PageItemMobile/index.vue'
@@ -38,10 +38,9 @@ export default {
       apiHost: (state) => state.apiHost,
       breadcrumbs: (state) => state.breadcrumbs,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack,
       backRoute: (state) => state.backRoute
     }),
+    ...mapGetters(['exchange', 'exchangeBack']),
     isActive () {
       let isActive = true
       if (this.options && this.selected.option) {

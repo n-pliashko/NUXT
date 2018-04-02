@@ -4,12 +4,10 @@ import mutations from './mutations'
 import actions from './actions'
 import getters from './getters'
 import config from '../config'
-import vat from './vat'
 
 import currency from './currency'
-import calculatePrice from './price'
 
- Vue.use(Vuex)
+Vue.use(Vuex)
 
 const state = {
   ...global.initialState,
@@ -40,8 +38,6 @@ const state = {
   allDesigners: []
 }
 
-state.vat = vat.bind(state)
-state.calculatePrice = calculatePrice.bind(state)
 
 const createStore = () => {
  return new Vuex.Store({

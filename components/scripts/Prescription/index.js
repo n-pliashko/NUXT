@@ -3,7 +3,7 @@ import Prescriptions from '@/components/scripts/Prescription/Prescriptions/index
 import LensType from '@/components/scripts/Prescription/LensType/index.vue'
 import LensOptions from '@/components/scripts/Prescription/LensOptions/index.vue'
 import TrustpilotWidget from '@/components/scripts/TrustpilotWidget/index.vue'
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 
 export default {
   name: 'Prescription',
@@ -61,10 +61,8 @@ export default {
       apiHost: (state) => state.apiHost,
       basket: (state) => state.basket,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack,
-      vat: (state) => state.vat
-    })
+    }),
+    ...mapGetters(['exchange', 'exchangeBack', 'vat'])
   },
   methods: {
     getPreviousStep: function (index) {

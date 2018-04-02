@@ -54,7 +54,7 @@ module.exports = {
   ],
   plugins: [
     '~/plugins/slick',
-    { src: '~plugins/persistedstate.js', ssr: false }
+   { src: '~plugins/persisted_state.js', ssr: false }
   ],
   router: {
     mode: 'history',

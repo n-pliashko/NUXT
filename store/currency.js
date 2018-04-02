@@ -26,6 +26,6 @@ export default {
   exchangeBackFuncByCurrency: function (price, currency) {
     return parseFloat(price / currency.rate)
   },
-  exchange: price => price,
-  exchangeBack: price => price
+  exchange: (price) => price,
+  exchangeBack: (price) => price
 }

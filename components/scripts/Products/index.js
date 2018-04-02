@@ -11,7 +11,7 @@ import PageFooter from '@/components/scripts/PageFooter/index.vue'
 import ScrollToTop from '@/components/scripts/ScrollToTop/index.vue'
 import Breadcrumbs from '@/components/scripts/Breadcrumbs/index.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import config from '@/config'
 import { parseQueryString, reverseRouteName, array_intersect, getSearchString, arrayToObject } from '@/config/helper'
 
@@ -53,22 +53,17 @@ export default {
       breadcrumbs: (state) => state.breadcrumbs,
       routerObj: (state) => state.pageMenuDescription,
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack,
       backRoute: (state) => state.backRoute,
       allCategories: (state) => state.allCategories,
       allDesigners: (state) => state.allDesigners,
-      vat: (state) => {
-        console.log('vat:::', state.vat)
-        return state.vat
-      }
+      ...mapGetters(['exchange', 'vat', 'exchangeBack'])
     }),
     isHistoryAvailable: function () {
       return true//!!(window.history && window.history.pushState)
     },
     calculatedItems: function () {
       let self = this
-      console.log(this.$store.state)
+
       return {
         ...this.items,
         priceFrom: parseInt(this.exchange(this.vat(this.items.priceFrom).price)),
@@ -76,7 +71,8 @@ export default {
         data: this.items.data.map(item => {
           return {
             ...item,
-            price: self.exchange(self.vat(item.price).price)
+            price: self.exchange(self.vat(item.price).price),
+            price_old: self.exchange(self.vat(item.price_old).price)
           }
         })
       }
@@ -109,13 +105,17 @@ export default {
     }
   },
   props: ['page', 'category_id', 'designer_id', 'main_category', 'search', 'category', 'designers'],
-  head() {
+  head () {
     let title = 'SelectSpecs'
     if (this.routerObj.page && this.routerObj.page.translations['en']) {
       title = this.routerObj.page.translations['en'].meta_title
     }
     if (this.routerObj.catalogue && this.routerObj.catalogue.translations['en']) {
       title = this.routerObj.catalogue.translations['en'].meta_title
+    }
+
+    if (this.designerDescription && this.designerDescription.meta_title) {
+      title = this.designerDescription.meta_title
     }
     title = this.convertMenuContext(title)
     const textarea = document.createElement('div')
@@ -141,7 +141,6 @@ export default {
         id: 'prev'
       })
     }
-
 
     let description = ''
     let keywords = ''
@@ -185,12 +184,11 @@ export default {
     ]
     return {
       title: title,
-      link : links,
+      link: links,
       meta: meta
     }
   },
   asyncData ({req, route, store}) {
-    console.log('asyncData')
     let loc = {}
     if (typeof window === 'undefined') {
       loc = parseUrl(req.headers.host + '/' + route.fullPath)
@@ -259,7 +257,7 @@ export default {
       filtersList: {},
       filterCountItems: {},
       scrollLoad: false,
-      designerDescription: '',
+      designerDescription: {},
       main_category_name: '',
       main_category_link: ''
     }
@@ -336,7 +334,7 @@ export default {
      }); */
   },
   destroyed: function () {
-    document.body.removeEventListener('scroll', this.handleScroll)
+    global.document.body.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
     convertMenuContext (context) {
@@ -371,7 +369,8 @@ export default {
         }
         return this.$http.post(this.apiHost + config.prefix + config.products.getDesignerDescription, data, this.requestOptions).then(response => response.json())
           .then(json => {
-            self.designerDescription = json.description
+            self.designerDescription = json
+            self.$emit('updateHead')
           })
       }
     },
@@ -434,43 +433,46 @@ export default {
       }
       return this.$http.post(this.apiHost + config.prefix + config.products.searchProducts, data, Object.assign({}, requestOpt, this.requestOptions)).then(response => response.json())
         .then(json => {
-          if (json.filters) {
-            json.filters.map(key => {
-              if (Object.keys(self.filters).indexOf(key) === -1) {
-                self.$set(self.filters, key, [])
+            if (json.filters) {
+              json.filters.map(key => {
+                if (Object.keys(self.filters).indexOf(key) === -1) {
+                  self.$set(self.filters, key, [])
+                }
+              })
+            }
+            if (json.categories) {
+              self.filtersList = json.categories
+            }
+
+            if (json.items) {
+              if (append) {
+                self.items.data = self.items.data.concat(json.items.items)
+              } else {
+                self.items.data = json.items.items
               }
-            })
-          }
-          if (json.categories) {
-            self.filtersList = json.categories
-          }
+              self.items.total = json.items.total
+              if (self.pagination.skip > self.items.total) {
+                self.pagination.skip = 0
+                self.pagination.currentPage = 1
+              }
 
-          if (json.items) {
-            if (append) {
-              self.items.data = self.items.data.concat(json.items.items)
-            } else {
-              self.items.data = json.items.items
+              if (json.items.aggregate) {
+                let aggregate = json.items.aggregate
+                self.items.priceFrom = aggregate.min_price >= 0 ? aggregate.min_price : ''
+                self.items.priceTo = aggregate.max_price >= 0 ? aggregate.max_price : ''
+
+                self.items.armFrom = aggregate.min_arm >= 0 ? parseInt(aggregate.min_arm) : ''
+                self.items.armTo = aggregate.max_arm >= 0 ? Math.ceil(aggregate.max_arm) : ''
+
+                self.items.bridgeFrom = aggregate.min_bridge >= 0 ? parseInt(aggregate.min_bridge) : ''
+                self.items.bridgeTo = aggregate.max_bridge >= 0 ? Math.ceil(aggregate.max_bridge) : ''
+
+                self.items.lensFrom = aggregate.min_lens >= 0 ? parseInt(aggregate.min_lens) : ''
+                self.items.lensTo = aggregate.max_lens >= 0 ? Math.ceil(aggregate.max_lens) : ''
+              }
             }
-            self.items.total = json.items.total
-            if (self.pagination.skip > self.items.total) {
-              self.pagination.skip = 0
-              self.pagination.currentPage = 1
-            }
           }
-          if (json.aggregate) {
-            self.items.priceFrom = json.aggregate.min_price >= 0 ? json.aggregate.min_price : ''
-            self.items.priceTo = json.aggregate.max_price >= 0 ? json.aggregate.max_price : ''
-
-            self.items.armFrom = json.aggregate.min_arm >= 0 ? parseInt(json.aggregate.min_arm) : ''
-            self.items.armTo = json.aggregate.max_arm >= 0 ? Math.ceil(json.aggregate.max_arm) : ''
-
-            self.items.bridgeFrom = json.aggregate.min_bridge >= 0 ? parseInt(json.aggregate.min_bridge) : ''
-            self.items.bridgeTo = json.aggregate.max_bridge >= 0 ? Math.ceil(json.aggregate.max_bridge) : ''
-
-            self.items.lensFrom = json.aggregate.min_lens >= 0 ? parseInt(json.aggregate.min_lens) : ''
-            self.items.lensTo = json.aggregate.max_lens >= 0 ? Math.ceil(json.aggregate.max_lens) : ''
-          }
-        })
+        )
         .then(() => {
           if (onlyItems) {
             self.itemLoading = false
@@ -581,8 +583,8 @@ export default {
     },
     handleScroll (event) {
       let self = this
-      let el = document.querySelector('.shop-item:last-child')
-      if (el && !this.scrollLoad && document.body.scrollTop >= el.offsetTop - el.offsetHeight) {
+      let el = global.document.querySelector('.shop-item:last-child')
+      if (el && !this.scrollLoad && global.document.body.scrollTop >= el.offsetTop - el.offsetHeight) {
         if (this.pagination.skip + this.pagination.limit < this.items.total) {
           this.pagination.skip += this.pagination.limit
           self.scrollLoad = true
@@ -868,8 +870,7 @@ export default {
       },
       deep: true
     },
-    'routerObj':function () {
-      console.log('routerObj watch')
+    'routerObj': function () {
       if (!this.page) {
         let self = this
         this.generateBreadcrumbs()
@@ -888,6 +889,7 @@ export default {
           this.getDescriptionForBrandPage()
         }
       },
+      immediate: true,
       deep: true
     },
     'categoryObj': {
@@ -903,12 +905,12 @@ export default {
     },
     '$route' (to, from) {
       this.navigation = {
-        location: window.location.href,
-        protocol: window.location.protocol,
-        host: window.location.host,
-        pathname: window.location.pathname,
-        search: window.location.search,
-        hash: window.location.hash
+        location: this.location.href,
+        protocol: this.location.protocol,
+        host: this.location.host,
+        pathname: this.location.pathname,
+        search: this.location.search,
+        hash: this.location.hash
       }
       if (this.page) {
         this.layout = this.page
@@ -931,7 +933,7 @@ export default {
           Object.assign(filters, {[key]: []})
         })
         this.filters = filters
-        this.designerDescription = ''
+        this.designerDescription = {}
         this.pagination = {
           currentPage: 1,
           skip: 0,

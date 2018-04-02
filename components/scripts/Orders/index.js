@@ -1,4 +1,4 @@
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import moment from 'moment'
 
 import PageHeader from '@/components/scripts/PageHeader/index.vue'
@@ -36,10 +36,8 @@ export default {
       auth: (state) => state.authorization,
       orders: (state) => (state.orders || []),
       currencies: (state) => (state.currency.allCurrency || []),
-      exchange: (state) => state.currency.exchange,
-      exchangeBack: (state) => state.currency.exchangeBack,
-      vat: (state) => state.vat
-    })
+    }),
+    ...mapGetters(['exchange', 'exchangeBack', 'vat'])
   },
   data () {
     return {

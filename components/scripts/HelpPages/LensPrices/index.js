@@ -4,7 +4,7 @@ import ShareButtons from '@/components/scripts/ShareButtons/index.vue'
 import PageFooter from '@/components/scripts/PageFooter/index.vue'
 import ScrollToTop from '@/components/scripts/ScrollToTop/index.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'LensPrices',
@@ -19,8 +19,8 @@ export default {
     ...mapState({
       currency: (state) => ({...state.currency.allCurrency[state.currency.selected]}),
       exchange: (state) => state.currency.exchange,
-      vat: (state) => state.vat
-    })
+    }),
+    ...mapGetters(['exchange', 'vat'])
   },
   methods: {
     convertPrice: function (price) {
