@@ -52,7 +52,7 @@ export default {
       auth: (state) => state.authorization,
       wishlist: (state) => state.wishlist
     }),
-    ...mapGetters(['exchange', 'vat']),
+    ...mapGetters(['exchange', 'vat', 'calculatePrice']),
     items () {
       const {...data} = this.basket
       if (!data || !data.order || !data.order.orderItems) {
@@ -70,17 +70,21 @@ export default {
     hasProducts: function () {
       return this.basket.order && this.basket.order.totalItems > 0
     },
-    hasBasketItems: function () {
-      return this.basket.order.orderItems.length
+    basketOrderCount () {
+      return this.basket.order && this.basket.order.orderItems ? this.basket.order.orderItems.filter(item => !item.buy_later).length : 0
     },
     savedAmount: function () {
-      return this.basket.order.orderItems
+      return this.basket.order ? this.basket.order.orderItems.filter(item => item.buy_later).length : 0
     },
     somethingSaved: function () {
       return this.savedAmount > 0
     }
   },
   methods: {
+    getTotal () {
+      return (parseFloat(this.calculatePrice(this.basket.order ? this.basket.order.order_amount: 0.00)) +
+        parseFloat(this.exchange(this.basket.order ? this.basket.order.shipping_cost : 0.00))).toFixed(this.currency && this.currency.precis || 2)
+    },
     assignItems (field, newItems) {
       newItems.map(item => {
         const index = this[field].findIndex(jtem => jtem.ordered_item_number == item.ordered_item_number)
@@ -120,38 +124,13 @@ export default {
       }
       return defaultName
     },
-    addToSave: function (item) {
-      var itemData = {
-        id: item.item_number,
-        type: 'basket',
-        params: item
-      }
-      this.$store.dispatch('removeItemFromBasket', item.ordered_item_number)
-      this.$store.dispatch('switchWishlist', itemData)
-      // this.showMovedBlock(item.ordered_item_number, 'later')
+    addToSave: function (itemID) {
+      this.$store.dispatch('addToSave', itemID)
+      this.showMovedBlock(itemID, 'later')
     },
-    delFromSave: function (item) {
-      var itemData = {
-        id: item.item_number,
-        type: 'basket',
-        params: item
-      }
-      let {...iadd} = item
-      delete iadd['order_number']
-      delete iadd['ordered_item_number']
-      delete iadd['order_option_number']
-      this.$store.dispatch('addItemToBasket', iadd)
-      this.$store.dispatch('switchWishlist', itemData)
-      // this.showMovedBlock(item.ordered_item_number, 'basket')
-    },
-    removeFromSaved: function (item) {
-      var itemData = {
-        id: item.item_number,
-        type: 'basket',
-        params: item
-      }
-      this.$store.dispatch('switchWishlist', itemData)
-      // this.showMovedBlock(item.ordered_item_number, 'later')
+    delFromSave: function (itemID) {
+      this.$store.dispatch('delFromSave', itemID)
+      this.showMovedBlock(itemID, 'basket')
     },
     submitDiscount (e) {
       e.preventDefault()
@@ -184,13 +163,13 @@ export default {
       this.showInfo = true
     },
     getItemPrice (item) {
-      return this.exchange(this.vat(item.option.price).price * parseInt(item.quantity))
+      return this.calculatePrice(parseFloat(item.option.price) * parseInt(item.quantity))
     }
   },
   mounted () {
-    if (this.$route.params.addPrice) {
-      // this.$store.dispatch('putAdditionalPrice', this.$route.params.addPrice)
-    }
+    /* if (this.$route.params.addPrice) {
+        this.$store.dispatch('putAdditionalPrice', this.$route.params.addPrice)
+     } */
   },
   created () {
     $('#emptyBasketWithSavedBlock').show()

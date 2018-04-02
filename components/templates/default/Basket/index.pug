@@ -1,7 +1,6 @@
 #basket-page.page
   PageHeader
   ConfirmDeleteModal(:itemID="delOrderedItemID")
-  ConfirmDeleteSavedModal(:itemID="delOrderedItemID")
 
   main
     section.steps
@@ -27,7 +26,7 @@
             br
             br
             br
-            nuxt-link#startShoppingEmptyLink(:to='{name: "Main"}').btn.orange-button.text-white start shopping »
+            router-link#startShoppingEmptyLink(:to='{name: "Main"}').btn.orange-button.text-white start shopping »
             br
             br
             br
@@ -35,145 +34,16 @@
             br
             br
             br
-            .col-12(v-if='$store.state.wishlist.length > 0')
-              #emptyBasketWithSavedBlock.saved-empty-basket-block
-                p.small You have items saved for later. To buy one, or more, click "Move to Basket" next to the item.
-              #saveForLaterEmptyBasket.saved-alert-block
-                p
-                  strong {{movedItem}}
-                  |  has been moved to {{movedTo}}
-              p.my-3
-                strong
-                  nuxt-link#continueShoppingEmptyBasket(:to='{name: "Main"}').blue-ul Continue Shopping »
-              p(v-if="somethingSaved").large.mt-5.mb-2
-                strong Saved for later
-                  span  (
-                    span {{savedAmount}}
-                    |  item
-                    span(v-if="savedAmount > 1") s
-                    | )
-              .saved-item(v-for="(item, key) in $store.state.wishlist.filter(function (item) { return item.params.type == 'basket'})")
-                .container-fluid
-                  .row
-                    .w-80
-                      .row
-                        .col-12.col-md-3.mb-2
-                          img(src="https://d9qzjwuieyamt.cloudfront.net/res/images/items/140default_uk.jpg").img-fluid
-                        .col-12.col-md-9
-                          .d-flex.flex-column.justify-content-center.align-items-start
-                            .frame-info
-                              p
-                                strong
-                                  nuxt-link(:to="{ name: 'ItemPage', params: {" +
-                                  "item: (item.params.params.item_number / 100).toString(), " +
-                                  "category: reverseRouteName(item.params.params.categoryName, 'cat-name'), " +
-                                  "designer: reverseRouteName(item.params.params.designerName, 'designer-name'), " +
-                                  "option: reverseRouteName(item.params.params.modelName, 'model-name')}}").blue-hovered-link {{item.params.params.designerName}} {{item.params.params.modelName}}
-                              p.small
-                                strong Colour:&nbsp;
-                                | {{item.params.params.option.name}} {{item.params.params.option.description}}
-                              p.small
-                                strong Size:&nbsp;
-                                | {{item.params.params.option.arm}}-{{item.params.params.option.bridge}}-{{item.params.params.option.lens}}-{{item.params.params.option.height}}
-                              p.small.mb-2
-                                strong Frame Price:&nbsp;
-                                  span#savedPriceTextEmptyBasket.red
-                                    span(v-html="currency.symbol")
-                                    | {{exchange(vat(item.params.params.option.price).price)}}
-                                // span &nbsp;x {{item.params.params.quantity}}
-                            .frame-manipulations
-                              br
-                              p.smaller.mb-2
-                                a(href="#", @click='delFromSave(item.params.params)').blue-ul Move to basket
-                                | &nbsp;&nbsp;|&nbsp;&nbsp;
-                                a(:href='"#rxSaved" + item.params.params.ordered_item_number', data-toggle="collapse",
-                                aria-expanded="false", :aria-controls='"rx_" + item.params.params.ordered_item_number').blue-ul Lens & Prescription Details »
-                              div(:id='"rxSaved" + item.params.params.ordered_item_number').collapse
-                                .container-fluid
-                                  .row
-                                    .col-12.col-md-6.px-0
-                                      p
-                                        strong
-                                          u Use Type
-                                      p.small Intermediate (Single Vision)
-                                      br
-                                      p
-                                        strong
-                                          u Lens Type
-                                      p.small
-                                        span Thin & Light 1.56 Index -&nbsp;
-                                        span.red
-                                          strong ₴0.00
-                                        br
-                                        span Clear -&nbsp;
-                                        span.red
-                                          strong ₴0.00
-                                        br
-                                        span Anti-Reflection&nbsp;&nbsp;&nbsp;&nbsp;
-                                        span Scratch Resistance
-                                      br
-                                    .col-12.col-md-6.px-0
-                                      p
-                                        strong
-                                          u Prescription
-                                      table.table.item-script
-                                        thead
-                                          tr
-                                            th.eye  
-                                            th.sph SPH
-                                            th.cyl CYL
-                                            th.axis AXIS
-                                            th.add ADD
-                                        tbody
-                                          tr
-                                            td
-                                              strong Right
-                                            td - 1.50
-                                            td 0
-                                            td 0
-                                            td 0.00
-                                          tr
-                                            td
-                                              strong Left
-                                            td - 1.25
-                                            td 0
-                                            td 0
-                                            td 0.00
-                                      p.text-center.small
-                                        strong Pupillary Distance (PD):
-                                        |  63
-                            .frame-attention(v-if="hasExpress")
-                              p.small
-                                strong Express unavailable -&nbsp;
-                                  nuxt-link(to="#").blue-ul Why?
-                              p.small.green
-                                i.fa.fa-clock-o.mr-2
-                                | Completed to your prescription and shipped within 7-10 working days
-                    .w-20
-                      .d-flex.flex-column.justify-content-center.align-items-end.align-content-stretch
-                        p.large
-                          strong
-                            span(v-html="currency.symbol")
-                            | {{exchange(vat(item.params.params.option.price).price)}}
-                        //select#changeAmountSelect(v-model='item.quantity',
-                          @input="changeQtyItem(item.ordered_item_number, $event)").form-control
-                          option(v-for='n in 10', :value='n') {{ n }}
-                        br
-                        a#removeFromSavedEBButton(href="#", :data-id="item.params.params.ordered_item_number",
-                        data-toggle="modal", data-target="#basketConfirmDeleteSavedModal",
-                        @click="delOrderedItemID = item.params.params").remove-link
-                          i.fa.fa-close
-                          | &nbsp;Remove
     section(v-else).has-products
       .container-fluid.text-center
         .row
           .col-12.py-2
             h1.black Your basket
             p.small Review your basket or&nbsp;
-              nuxt-link#continueShoppingUpLink(:to='{name: "Main"}').blue-ul continue shopping »
+              router-link#continueShoppingUpLink(:to='{name: "Main"}').blue-ul continue shopping »
       .basket
         .container-fluid
-          .row(v-if="hasBasketItems")
+          .row(v-if="basketOrderCount > 0")
             .col-12.col-lg-12(v-if="loading || basketLoading")
               .loader-block
                 .loader
@@ -190,7 +60,7 @@
                   strong FREE Delivery&nbsp;
                   | on your order.
               .basket-item(v-for='(item, key) in items',
-                :key='item.ordered_item_number')
+              :key='item.ordered_item_number')
                 .container-fluid
                   .row
                     .w-80
@@ -202,7 +72,7 @@
                             .frame-info
                               p
                                 strong
-                                  nuxt-link(:to="{ name: 'ItemPage', params: {" +
+                                  router-link(:to="{ name: 'ItemPage', params: {" +
                                   "item: parseFloat(item.item_number / 100).toFixed(2), " +
                                   "category: reverseRouteName(item.categoryName, 'cat-name'), " +
                                   "designer: reverseRouteName(item.designerName, 'designer-name'), " +
@@ -217,11 +87,11 @@
                                 strong Frame Price:&nbsp;
                                   span#framePriceText.red
                                     span(v-html="currency.symbol")
-                                    | {{exchange(vat(item.option.price).price)}}
+                                    | {{calculatePrice(item.option.price)}}
                             .frame-manipulations
                               br
                               p.small
-                                a(:id='"saveForLater" + item.ordered_item_number + "Button"', @click='addToSave(item)', href="#").blue-ul Save for later
+                                a(:id='"saveForLater" + item.ordered_item_number + "Button"', @click='addToSave(item.ordered_item_number)', href="#").blue-ul Save for later
                                 | &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
                                 a(:href='"#rx_" + item.ordered_item_number', data-toggle="collapse",
                                 aria-expanded="false", :aria-controls='"rx_" + item.ordered_item_number').blue-ul Lens & Prescription Details »
@@ -240,11 +110,11 @@
                                       p.small
                                         span Thin & Light 1.56 Index -&nbsp;
                                         span.red
-                                          strong ₴0.00
+                                          strong {{calculatePrice(0.0, false, true)}}
                                         br
                                         span Clear -&nbsp;
                                         span.red
-                                          strong ₴0.00
+                                          strong {{calculatePrice(0.0, false, true)}}
                                         br
                                         span Anti-Reflection&nbsp;&nbsp;&nbsp;&nbsp;
                                         span Scratch Resistance
@@ -283,7 +153,7 @@
                             .frame-attention(v-if="hasExpress")
                               p.small
                                 strong Express unavailable -&nbsp;
-                                  nuxt-link(to="#").blue-ul Why?
+                                  router-link(to="#").blue-ul Why?
                               p.small.green
                                 i.fa.fa-clock-o.mr-2
                                 | Completed to your prescription and shipped within 7-10 working days
@@ -310,7 +180,7 @@
               .text-left.d-none.d-md-inline
                 p.my-3
                   strong
-                    nuxt-link#continueShoppingMidLink(:to='{name: "Main"}').blue-ul Continue Shopping »
+                    router-link#continueShoppingMidLink(:to='{name: "Main"}').blue-ul Continue Shopping »
               p(v-if="somethingSaved").large.mt-5.mb-2
                 strong Saved for later
                   span  (
@@ -322,7 +192,7 @@
                 p
                   strong {{movedItem}}
                   |  has been moved to {{movedTo}}
-              .saved-item(v-for="(item, key) in $store.state.wishlist.filter(function (item) { return item.params.type == 'basket'})")
+              .saved-item(v-for='(item, key) in laterItems', :key='item.ordered_item_number')
                 .container-fluid
                   .row
                     .w-80
@@ -334,31 +204,31 @@
                             .frame-info
                               p
                                 strong
-                                  nuxt-link(:to="{ name: 'ItemPage', params: {" +
-                                  "item: (item.params.params.item_number / 100).toString(), " +
-                                  "category: reverseRouteName(item.params.params.categoryName, 'cat-name'), " +
-                                  "designer: reverseRouteName(item.params.params.designerName, 'designer-name'), " +
-                                  "option: reverseRouteName(item.params.params.modelName, 'model-name')}}").blue-hovered-link {{item.params.params.designerName}} {{item.params.params.modelName}}
+                                  router-link(:to="{ name: 'ItemPage', params: {" +
+                                  "item: (item.item_number / 100).toString(), " +
+                                  "category: reverseRouteName(item.categoryName, 'cat-name'), " +
+                                  "designer: reverseRouteName(item.designerName, 'designer-name'), " +
+                                  "option: reverseRouteName(item.modelName, 'model-name')}}").blue-hovered-link {{item.designerName}} {{item.modelName}}
                               p.small
                                 strong Colour:&nbsp;
-                                | {{item.params.params.option.name}} {{item.params.params.option.description}}
+                                | {{item.option.name}} {{item.option.description}}
                               p.small
                                 strong Size:&nbsp;
-                                | {{item.params.params.option.arm}}-{{item.params.params.option.bridge}}-{{item.params.params.option.lens}}-{{item.params.params.option.height}}
+                                | {{item.option.arm}}-{{item.option.bridge}}-{{item.option.lens}}-{{item.option.height}}
                               p.small.mb-2
                                 strong Frame Price:&nbsp;
                                   span#savedPriceText.red
                                     span(v-html="currency.symbol")
-                                    | {{exchange(vat(item.params.params.option.price).price)}}
-                                // span &nbsp;x {{item.params.params.quantity}}
+                                    | {{calculatePrice(item.option.price)}}
+                                // span &nbsp;x {{item.quantity}}
                             .frame-manipulations
                               br
                               p.smaller.mb-2
-                                a(href="#", @click='delFromSave(item.params.params)').blue-ul Move to basket
+                                a(href="#", @click='delFromSave(item.ordered_item_number)').blue-ul Move to basket
                                 | &nbsp;&nbsp;|&nbsp;&nbsp;
-                                a(:href='"#rxSaved" + item.params.params.ordered_item_number', data-toggle="collapse",
-                                aria-expanded="false", :aria-controls='"rx_" + item.params.params.ordered_item_number').blue-ul Lens & Prescription Details »
-                              div(:id='"rxSaved" + item.params.params.ordered_item_number').collapse
+                                a(:href='"#rxSaved" + item.ordered_item_number', data-toggle="collapse",
+                                aria-expanded="false", :aria-controls='"rx_" + item.ordered_item_number').blue-ul Lens & Prescription Details »
+                              div(:id='"rxSaved" + item.ordered_item_number').collapse
                                 .container-fluid
                                   .row
                                     .col-12.col-md-6.px-0
@@ -373,11 +243,11 @@
                                       p.small
                                         span Thin & Light 1.56 Index -&nbsp;
                                         span.red
-                                          strong ₴0.00
+                                          strong {{calculatePrice(0.0, false, true)}}
                                         br
                                         span Clear -&nbsp;
                                         span.red
-                                          strong ₴0.00
+                                          strong {{calculatePrice(0.0, false, true)}}
                                         br
                                         span Anti-Reflection&nbsp;&nbsp;&nbsp;&nbsp;
                                         span Scratch Resistance
@@ -415,7 +285,7 @@
                             .frame-attention(v-if="hasExpress")
                               p.small
                                 strong Express unavailable -&nbsp;
-                                  nuxt-link(to="#").blue-ul Why?
+                                  router-link(to="#").blue-ul Why?
                               p.small.green
                                 i.fa.fa-clock-o.mr-2
                                 | Completed to your prescription and shipped within 7-10 working days
@@ -424,14 +294,14 @@
                         p.large
                           strong
                             span(v-html="currency.symbol")
-                            | {{exchange(vat(item.params.params.option.price).price)}}
+                            | {{calculatePrice(item.option.price)}}
                         //select#changeAmountSelect(v-model='item.quantity',
                           @input="changeQtyItem(item.ordered_item_number, $event)").form-control
                           option(v-for='n in 10', :value='n') {{ n }}
                         br
-                        a#removeFromSavedEBButton(href="#", :data-id="item.params.params.ordered_item_number",
-                        data-toggle="modal", data-target="#basketConfirmDeleteSavedModal",
-                        @click="delOrderedItemID = item.params.params").remove-link
+                        a(:id="'remove' + item.ordered_item_number + 'FromSavedButton'", href="#", :data-id="item.ordered_item_number",
+                        data-toggle="modal", data-target="#basketConfirmDeleteModal",
+                        @click="delOrderedItemID = item.ordered_item_number").remove-link
                           i.fa.fa-close
                           | &nbsp;Remove
             .col-12.col-lg-4
@@ -444,18 +314,18 @@
                 p.p-2 Sub Total
                   span#sub-total.float-right
                     span(v-html="currency.symbol")
-                    | {{exchange(vat(basket.order ? basket.order.order_amount : 0.00).price)}}
+                    | {{calculatePrice(basket.order ? basket.order.order_amount : 0.00)}}
                 p.p-2 Delivery
                   span.float-right
                     span#shipping(v-if="+(basket.order.shipping_cost)>0")
                       span(v-html="currency.symbol")
-                      | {{exchange(vat(basket.order ? basket.order.shipping_cost : 0.00).price)}}
+                      | {{exchange(basket.order ? basket.order.shipping_cost : 0.00)}}
                     span#free-shipping(v-else) FREE
                 p(style="font-size: 1rem;").p-2
                   strong Order Total
                     span#total.float-right
                       span(v-html="currency.symbol")
-                      | {{exchange(vat(basket.order ? basket.order.final_total: 0.00).price)}}
+                      | {{getTotal()}}
               .cart-summary-button
                 button#openCheckoutButton(type='button',
                 @click='checkout',
@@ -490,7 +360,7 @@
                 p.d-md-none
                   br
                   strong
-                    nuxt-link#continueShoppingBottomLink(:to='{name: "Main"}').blue-ul Continue Shopping »
+                    router-link#continueShoppingBottomLink(:to='{name: "Main"}').blue-ul Continue Shopping »
                   br
                 br
                 em.smallest 20% VAT included for UK & EU customers
@@ -505,5 +375,149 @@
                   TermsInfoModal
                 br
                 br
-  TrustpilotWidget(v-if='basket.order && basket.order.totalItems > 0')
+          .row(v-else).mb-5
+            .col-12
+              .loader-block(v-if="loading || basketLoading")
+                .loader
+              #emptyBasketWithSavedBlock.saved-empty-basket-block
+                p.large
+                  strong Your shopping basket is empty
+                p.small You have items saved for later. To buy one, or more, click "Move to Basket" next to the item.
+              #saveForLaterEmptyBasket.saved-alert-block
+                p
+                  strong {{movedItem}}
+                  |  has been moved to {{movedTo}}
+              p.my-3
+                strong
+                  router-link#continueShoppingEmptyBasket(:to='{name: "Main"}').blue-ul Continue Shopping »
+              p(v-if="somethingSaved").large.mt-5.mb-2
+                strong Saved for later
+                  span  (
+                    span {{savedAmount}}
+                    |  item
+                    span(v-if="savedAmount > 1") s
+                    | )
+              .saved-item(v-for='(item, key) in laterItems', :key='item.ordered_item_number')
+                .container-fluid
+                  .row
+                    .w-80
+                      .row
+                        .col-11.col-md-3.mb-2
+                          img(src="https://d9qzjwuieyamt.cloudfront.net/res/images/items/140default_uk.jpg").img-fluid
+                        .col-11.col-md-9
+                          .d-flex.flex-column.justify-content-center.align-items-start
+                            .frame-info
+                              p
+                                strong
+                                  router-link(:to="{ name: 'ItemPage', params: {" +
+                                  "item: (item.item_number / 100).toString(), " +
+                                  "category: reverseRouteName(item.categoryName, 'cat-name'), " +
+                                  "designer: reverseRouteName(item.designerName, 'designer-name'), " +
+                                  "option: reverseRouteName(item.modelName, 'model-name')}}").blue-hovered-link {{item.designerName}} {{item.modelName}}
+                              p.small
+                                strong Colour:&nbsp;
+                                | {{item.option.name}} {{item.option.description}}
+                              p.small
+                                strong Size:&nbsp;
+                                | {{item.option.arm}}-{{item.option.bridge}}-{{item.option.lens}}-{{item.option.height}}
+                              p.small.mb-2
+                                strong Frame Price:&nbsp;
+                                  span#savedPriceTextEmptyBasket.red
+                                    span(v-html="currency.symbol")
+                                    | {{calculatePrice(item.option.price)}}
+                                // span &nbsp;x {{item.quantity}}
+                            .frame-manipulations
+                              br
+                              p.smaller.mb-2
+                                a(href="#", @click='delFromSave(item.ordered_item_number)').blue-ul Move to basket
+                                | &nbsp;&nbsp;|&nbsp;&nbsp;
+                                a(:href='"#rxSaved" + item.ordered_item_number', data-toggle="collapse",
+                                aria-expanded="false", :aria-controls='"rx_" + item.ordered_item_number').blue-ul Lens & Prescription Details »
+                              div(:id='"rxSaved" + item.ordered_item_number').collapse
+                                .container-fluid
+                                  .row
+                                    .col-12.col-md-6.px-0
+                                      p
+                                        strong
+                                          u Use Type
+                                      p.small Intermediate (Single Vision)
+                                      br
+                                      p
+                                        strong
+                                          u Lens Type
+                                      p.small
+                                        span Thin & Light 1.56 Index -&nbsp;
+                                        span.red
+                                          strong {{calculatePrice(0.0, false, true)}}
+                                        br
+                                        span Clear -&nbsp;
+                                        span.red
+                                          strong {{calculatePrice(0.0, false, true)}}
+                                        br
+                                        span Anti-Reflection&nbsp;&nbsp;&nbsp;&nbsp;
+                                        span Scratch Resistance
+                                      br
+                                    .col-12.col-md-6.px-0
+                                      p
+                                        strong
+                                          u Prescription
+                                      table.table.item-script
+                                        thead
+                                          tr
+                                            th.eye  
+                                            th.sph SPH
+                                            th.cyl CYL
+                                            th.axis AXIS
+                                            th.add ADD
+                                        tbody
+                                          tr
+                                            td
+                                              strong Right
+                                            td - 1.50
+                                            td 0
+                                            td 0
+                                            td 0.00
+                                          tr
+                                            td
+                                              strong Left
+                                            td - 1.25
+                                            td 0
+                                            td 0
+                                            td 0.00
+                                      p.text-center.small
+                                        strong Pupillary Distance (PD):
+                                        |  63
+                            .frame-attention(v-if="hasExpress")
+                              p.small
+                                strong Express unavailable -&nbsp;
+                                  router-link(to="#").blue-ul Why?
+                              p.small.green
+                                i.fa.fa-clock-o.mr-2
+                                | Completed to your prescription and shipped within 7-10 working days
+                    .w-20
+                      .d-flex.flex-column.justify-content-center.align-items-end.align-content-stretch
+                        p.large
+                          strong
+                            span(v-html="currency.symbol")
+                            | {{calculatePrice(item.option.price)}}
+                        //select#changeAmountSelect(v-model='item.quantity',
+                          @input="changeQtyItem(item.ordered_item_number, $event)").form-control
+                          option(v-for='n in 10', :value='n') {{ n }}
+                        br
+                        a#removeFromSavedEBButton(href="#", :data-id="item.ordered_item_number",
+                        data-toggle="modal", data-target="#basketConfirmDeleteModal",
+                        @click="delOrderedItemID = item.ordered_item_number").remove-link
+                          i.fa.fa-close
+                          | &nbsp;Remove
+    //section(v-if="!!basket.order.orderItems").saved-for-later
+      .container-fluid
+        .row
+          .col-10.col-sm-5.col-md-4.col-lg-3
+          .col-12.col-sm-7.col-md-8.col-lg-9
+            .green-block
+              p.small
+                strong This part of your order can be shipped with our express service
+              p.smaller Order by 3pm, today to receive this item tomorrow, simply select the 'Express' delivery method at checkout -&nbsp;
+                a(href="#").blue-ul Details
+    TrustpilotWidget(v-if='basket.order && basket.order.totalItems > 0')
   PageFooter
